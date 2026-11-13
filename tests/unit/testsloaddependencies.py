@@ -1,4 +1,5 @@
 # tests/unit/testsloaddependencies
+from os import name
 import unittest
 import tomllib
 
@@ -27,7 +28,10 @@ class TestLoadDependencies(unittest.TestCase):
     def test_load_meta_data(self):
         with open("./pyproject.toml", "rb") as toml:
             data_tomlib: dict = tomllib.load(toml)
-        require_dependencies = "name"
-        backend_dependencies = "version"
-        self.assertIn(require_dependencies, data_tomlib["project"])
-        self.assertIn(backend_dependencies, data_tomlib["project"])
+        name_project = "name"
+        version_project = "version"
+        dependencies = "dependencies"
+
+        self.assertIn(name_project, data_tomlib["project"])
+        self.assertIn(version_project, data_tomlib["project"])
+        self.assertIn(dependencies, data_tomlib["project"])
