@@ -1,0 +1,14 @@
+[build-system]
+requires=["flit_core>=4.0,<5"]
+build-backend="flit_core.buildapi"
+[project]
+name="django-learning-system"
+version="0.1"
+dependencies=[
+    "Django",
+    "djangorestframework-simplejwt",
+    "djangorestframework",
+    "psycopg[binary",
+    "pydantic"
+
+]
