@@ -35,3 +35,9 @@ class TestLoadDependencies(unittest.TestCase):
         self.assertIn(name_project, data_tomlib["project"])
         self.assertIn(version_project, data_tomlib["project"])
         self.assertIn(dependencies, data_tomlib["project"])
+    def test_load_optional_dependencies(self):
+        with open("./pyproject.toml", "rb") as toml:
+            data_tomlib: dict = tomllib.load(toml)
+        project_optional_dependencies = "optional-dependencies"
+        self.assertIn(project_optional_dependencies,data_tomlib["project"])
+        
