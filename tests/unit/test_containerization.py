@@ -18,14 +18,36 @@ class TestContainerization(unittest.TestCase):
         check=False)
         print(is_empty)
         self.assertEqual(is_empty,True,"El archivo esta vacio")
-        self.assertEqual(result.returncode,0,"El formato del Dockerfile es incorrecto")
+        self.assertEqual(result.returncode,0,
+        f"El formato del Dockerfile es incorrecto:{result.stdout}")
     def test_validation_format_critical(self):
         dockerfile=Path("Dockerfile")
+        data=set()
         with dockerfile.open(mode="r",encoding="utf-8") as archive:
-            data=None
+            
             for line in archive:
-                data=line
-            key_dockerfile_from="FROM"
-            key_dockerfile_workdir="WORKDIR"
-            self.assertIn(data,key_dockerfile_from)
-            self.assertIn(data,key_dockerfile_workdir)            
+                clean_line=line.strip()
+                if not clean_line or clean_line.startswith("#"):
+                    #ignora lineas vacias o comentada
+                    continue
+                instruction=clean_line.split()[0].upper()
+                data.add(instruction)
+        key_dockerfile_from="FROM"
+        key_dockerfile_workdir="WORKDIR"
+        key_dockerfile_copy="COPY"
+        key_dockerfile_run="RUN"
+        key_dockerfile_cmd="CMD"
+        key_dockerfile_user="USER"
+        self.assertIn(key_dockerfile_from,data,
+        "No se encontro el comando FROM")
+        self.assertIn(key_dockerfile_workdir,data,
+        "No se encontro el comando WORKDIR")
+        self.assertIn(key_dockerfile_run,data,
+        "No se encontro el comando RUN")
+        self.assertIn(key_dockerfile_copy,data,
+        "No se encontro el comando COPY")            
+        self.assertIn(key_dockerfile_cmd,data,
+        "No se encontro el comando CMD")
+        self.assertIn(key_dockerfile_user,data,
+        "No se encontro el comando USER")
+                                    
