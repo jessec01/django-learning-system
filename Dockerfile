@@ -1,13 +1,17 @@
 FROM  python:3.12-slim-bookworm
 
-WORKDIR /the/workdir/path
+WORKDIR /app
 
-COPY pyproject.toml uv.lock ./
-RUN uv sync --locked --no-dev --extra prod --no-cache
+COPY src/ /app/src/ 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+COPY  pyproject.toml .
+COPY  README.md .
+COPY  LICENSE . 
 
-COPY src ./src
+RUN uv sync
 
-RUN useradmin --uid 10001 --create-home app
+RUN groupadd --system --gid 10001 appuser && \
+    useradd --system --uid 10001 --gid appuser --no-create-home --shell /usr/sbin/nologin appuser
 
 USER 10001
 
