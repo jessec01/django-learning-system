@@ -2,3 +2,5 @@ __pycache__
 .venv
 .gitignore
 .env
+readmen_test_adversarial_run.md
+readmen_test.md

@@ -1,6 +1,6 @@
-import unittest
-import subprocess
 import shutil
+import subprocess
+import unittest
 from pathlib import Path
 
 
