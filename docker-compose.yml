@@ -21,18 +21,23 @@ services:
     mem_reservation: 64m
     pids_limit: 64
   db:
+    container_name: learning-postgres
     image: postgres:15
     networks:
       - backend_net
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -U  ${POSTGRES_USER} -d ${POSTGRES_DB} -h localhost" ]
-      interval: 1m30s
-      timeout: 30s
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-learning_user} -d ${POSTGRES_DB:-learning_system_db} -h localhost" ]
+      interval: 10s
+      timeout: 5s
       retries: 5
       start_period: 30s
     mem_limit: 128m
     mem_reservation: 64m
     pids_limit: 64
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
   web:
     depends_on:
       db:
@@ -46,6 +51,8 @@ services:
     networks:
       - backend_net
     read_only: true
+    tmpfs:
+      - /tmp
     security_opt:
       - no-new-privileges:true
     cap_drop:
