@@ -1,16 +1,28 @@
 [build-system]
-requires=["flit_core>=4.0,<5"]
-build-backend="flit_core.buildapi"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
 [project]
-name="django-learning-system"
-version="0.1"
-dependencies=[
-    "Django",
-    "djangorestframework-simplejwt",
-    "djangorestframework",
-    "psycopg[binary]>=3.8",
-    "pydantic"]
-[project.optional-dependencies]
-prod=["gunicron>=23.0"]
-docs=["mkdocs>=1.6",
-    "mkdocs-material>=9.5",]
+name = "src"
+dynamic = ["version","description"]
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Gregory Perozo" }
+]
+dependencies = [
+    # "requests >= 2.28.0",
+    "gunicorn>=22.0.4",
+    "django>=5.0.0",
+    "psycopg2-binary>=2.9.3",
+    "djangorestframework>=3.14.0",
+    "djangorestframework_simplejwt>=5.2.2",
+    "django-redis>=5.4.0",
+    "bcrypt>=4.1.1",
+    "python-dotenv>=1.0.1",
+    
+]
+
+[project.urls]
+Homepage = "https://github.com"
