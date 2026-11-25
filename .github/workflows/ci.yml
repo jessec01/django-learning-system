@@ -23,6 +23,7 @@ jobs:
       - name: Run unit tests
         run: |
           touch .env
+          docker build -t django-learning-system:test .
           python -m unittest discover -s tests/unit -p "test_*.py" -v
 
   integration_e2e:
