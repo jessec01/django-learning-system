@@ -242,16 +242,17 @@ class TestDockerAdversarialRun(unittest.TestCase):
                 check=False,
             )
 
-    def test_egress_network_blocked_by_default(self):
+    def test_egress_network_blocked_under_isolated_contract(self):
         """
-        Test Adversarial (Network Egress Isolation):
-        Arranca el contenedor con la configuración de red por defecto:
+        Test Adversarial (Contrato Real de Aislamiento de Red):
+        Un Dockerfile no controla la red por sí solo; el contrato real exige
+        ejecutar el contenedor en una red aislada (--internal, equivalente a
+        'backend_net' en docker-compose.yml):
         1. El servidor (gunicorn:8000) debe aceptar llamadas locales/internas.
-        2. Cualquier intento de conexión saliente hacia afuera (ej. 1.1.1.1:80)
-           debe fallar (fail-closed / BLOCKED_EGRESS).
-        Nota TDD: fallará en Rojo mientras se ejecute en la red bridge por defecto
-        sin aislamiento (ej. red internal: true en docker-compose).
+        2. Cualquier intento de salida a internet (TCP, DNS, HTTPS) debe fallar
+           de forma cerrada (fail-closed).
         """
+        network_name = "dls-isolated-contract-net"
         container_name = "dls-adversarial-net-test"
 
         subprocess.run(
@@ -260,8 +261,23 @@ class TestDockerAdversarialRun(unittest.TestCase):
             text=True,
             check=False,
         )
+        subprocess.run(
+            ["docker", "network", "rm", network_name],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
 
         try:
+            net = subprocess.run(
+                ["docker", "network", "create", "--internal", network_name],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+            self.assertEqual(net.returncode, 0, msg=net.stderr)
+
             start = subprocess.run(
                 [
                     "docker",
@@ -269,6 +285,8 @@ class TestDockerAdversarialRun(unittest.TestCase):
                     "-d",
                     "--name",
                     container_name,
+                    "--network",
+                    network_name,
                     "--cap-drop=ALL",
                     "--security-opt=no-new-privileges:true",
                     self.IMAGE_TAG,
@@ -334,6 +352,12 @@ class TestDockerAdversarialRun(unittest.TestCase):
         finally:
             subprocess.run(
                 ["docker", "rm", "-f", container_name],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            subprocess.run(
+                ["docker", "network", "rm", network_name],
                 capture_output=True,
                 text=True,
                 check=False,
