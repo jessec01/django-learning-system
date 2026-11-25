@@ -19,4 +19,4 @@ RUN groupadd --system --gid 10001 appuser && \
 
 USER 10001
 
-CMD [ "gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD [ "gunicorn", "backend.infrastructure.config.wsgi:application", "--bind", "0.0.0.0:8000"]

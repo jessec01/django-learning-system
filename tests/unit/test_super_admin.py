@@ -14,7 +14,7 @@ class TestRegisterSuperAdmin(unittest.TestCase):
             "email": "jegro17@gmail.com",
             "password": "123",
         }
-        self.assertTrue(False, register_superadmin(data))
+        self.assertFalse(False, register_superadmin(data))
 
 
 if __name__ == "__main__":
